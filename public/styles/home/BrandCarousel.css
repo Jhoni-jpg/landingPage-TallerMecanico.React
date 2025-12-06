@@ -1,0 +1,15 @@
+.animate-scroll {
+    animation: scroll 30s linear infinite;
+}
+
+.animate-scroll:hover {
+    animation-play-state: paused;
+}
+
+.animate-fadeIn {
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+.animate-slideUp {
+    animation: slideUp 0.4s ease-out forwards;
+}
