@@ -11,8 +11,8 @@ import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
-    <footer 
-      className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white py-16 px-8 pb-8" 
+    <footer
+      className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white py-16 px-8 pb-8"
       id="contacto"
     >
       <div className="max-w-[1200px] mx-auto grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-12 mb-12">
@@ -23,14 +23,14 @@ const Footer = () => {
             la industria automotriz. Al igual que tu vehiculo, eres nuestra prioridad.
           </p>
           <div className="flex gap-4 mt-4">
-            <Link 
-              to="/" 
+            <Link
+              to="/"
               className="w-10 h-10 bg-white/10 text-white flex items-center justify-center rounded-full transition-all duration-300 hover:bg-blue-900 hover:-translate-y-1"
             >
               <Facebook className="group-hover:opacity-80 opacity-40 w-5" />
             </Link>
-            <Link 
-              to="/" 
+            <Link
+              to="/"
               className="w-10 h-10 bg-white/10 text-white flex items-center justify-center rounded-full transition-all duration-300 hover:bg-blue-900 hover:-translate-y-1"
             >
               <Instagram className="group-hover:opacity-80 opacity-40 w-5" />
@@ -42,27 +42,35 @@ const Footer = () => {
           <h3 className="mb-6 text-[1.3rem]">Servicios</h3>
           <ul className="list-none">
             <li className="mb-3">
-              <Link 
-                to="/" 
+              <Link
+                to="/"
                 className="text-white/70 no-underline transition-colors duration-300 hover:text-blue-900"
               >
                 Inicio
               </Link>
             </li>
             <li className="mb-3">
-              <Link 
-                to="/servicios" 
+              <Link
+                to="/servicios"
                 className="text-white/70 no-underline transition-colors duration-300 hover:text-blue-900"
               >
                 Servicios
               </Link>
             </li>
             <li className="mb-3">
-              <Link 
-                to="/pinturas" 
+              <Link
+                to="/pinturas"
                 className="text-white/70 no-underline transition-colors duration-300 hover:text-blue-900"
               >
                 Pintura
+              </Link>
+            </li>
+            <li className="mb-3">
+              <Link
+                to="/contacto"
+                className="text-white/70 no-underline transition-colors duration-300 hover:text-blue-900"
+              >
+                Contacto
               </Link>
             </li>
           </ul>
@@ -72,25 +80,25 @@ const Footer = () => {
           <h3 className="mb-6 text-[1.3rem]">Empresa</h3>
           <ul className="list-none">
             <li className="mb-3">
-              <a 
-                to="#nosotros" 
-                className="text-white/70 no-underline transition-colors duration-300 hover:text-blue-900"
+              <a
+                href="/#nosotros"
+                className="text-white/70 cursor-pointer no-underline transition-colors duration-300 hover:text-blue-900"
               >
                 Sobre Nosotros
               </a>
             </li>
             <li className="mb-3">
-              <a 
-                to="#comoFunciona" 
-                className="text-white/70 no-underline transition-colors duration-300 hover:text-blue-900"
+              <a
+                href="/#comoFunciona"
+                className="text-white/70 cursor-pointer no-underline transition-colors duration-300 hover:text-blue-900"
               >
                 Como funciona
               </a>
             </li>
             <li className="mb-3">
-              <a 
-                href="#preguntasFrecuentes" 
-                className="text-white/70 no-underline transition-colors duration-300 hover:text-blue-900"
+              <a
+                href="/#preguntasFrecuentes"
+                className="text-white/70 cursor-pointer no-underline transition-colors duration-300 hover:text-blue-900"
               >
                 Preguntas Frecuentes
               </a>

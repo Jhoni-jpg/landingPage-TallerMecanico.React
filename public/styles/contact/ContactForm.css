@@ -1,0 +1,105 @@
+.form-title {
+    background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #1e40af 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    position: relative;
+    display: inline-block;
+}
+
+.form-title::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #3b82f6, #2d58e4, #3b82f6);
+    border-radius: 2px;
+    animation: expandLine 0.8s ease-out forwards;
+}
+
+.form-subtitle {
+    animation: fadeInSubtitle 0.8s ease-out 0.3s backwards;
+}
+
+.input-sweep {
+    opacity: 0;
+    transform: translateX(-30px);
+    animation: sweepIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.group:focus-within .input-icon,
+.group:focus-within .textarea-icon {
+    color: #3b82f6;
+    animation: iconFloat 2s ease-in-out infinite;
+}
+
+.group:focus-within .textarea-icon {
+    animation: iconFloatTextarea 2s ease-in-out infinite;
+}
+
+.group:hover .input-icon,
+.group:hover .textarea-icon {
+    animation: iconBounce 0.6s ease;
+}
+
+.group:hover .textarea-icon {
+    animation: iconBounceTextarea 0.6s ease;
+}
+
+.focus\:shadow-input:focus {
+    box-shadow: 
+        0 0 0 4px rgba(59, 130, 246, 0.1),
+        0 4px 6px -1px rgba(59, 130, 246, 0.1);
+}
+
+.loading-spinner {
+    animation: spin 0.8s linear infinite;
+}
+
+.submit-button::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.submit-button:hover:not(:disabled)::before {
+    opacity: 1;
+}
+
+.submit-button > * {
+    position: relative;
+    z-index: 10;
+}
+
+.form-container::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        transparent 30%,
+        rgba(59, 130, 246, 0.05) 50%,
+        transparent 70%
+    );
+    transform: rotate(45deg) translateX(-100%);
+    animation: formShine 8s ease-in-out infinite;
+    pointer-events: none;
+}
+
+.group:focus-within .form-label {
+    color: #3b82f6;
+    animation: labelPulse 0.3s ease;
+}
+
+.active\:scale-98:active {
+    transform: scale(0.98);
+}

@@ -1,0 +1,39 @@
+.toast-enter {
+    animation: slideInRight 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.toast-exit-right {
+    animation: slideOutRight 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+.toast-exit-left {
+    animation: slideOutLeft 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+.toast-exit-bottom {
+    animation: slideOutBottom 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+.toast-exit-center {
+    animation: scaleOut 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+.toast-enter.position-left {
+    animation: slideInLeft 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.toast-enter.position-bottom {
+    animation: slideInBottom 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.toast-enter.position-center {
+    animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.toast-fade-enter {
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+.toast-fade-exit {
+    animation: fadeOut 0.3s ease-in forwards;
+}

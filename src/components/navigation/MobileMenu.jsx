@@ -73,7 +73,7 @@ export default function MobileMenu({ isMenuOpen, setIsMenuOpen, navHeight }) {
                             style={{ animationDelay: '150ms' }}
                         >
                             <a
-                                href="#nosotros"
+                                href="/#nosotros"
                                 onClick={handleLinkClick}
                                 className="block py-3 px-4 rounded-lg text-gray-800 no-underline font-semibold 
                                     transition-all duration-300 hover:bg-blue-50 hover:text-[rgb(44,78,151)]
