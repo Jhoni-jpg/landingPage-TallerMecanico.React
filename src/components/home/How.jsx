@@ -2,9 +2,7 @@ import { useState } from "react";
 import { useChatContext } from "../../hooks/useChatContext";
 
 export default function HowItWorks() {
-    const {
-        setInternalOpen
-    } = useChatContext();
+    const { openChat } = useChatContext();
     const [activeStep, setActiveStep] = useState(null);
 
 
@@ -157,7 +155,7 @@ export default function HowItWorks() {
                             </p>
 
                             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                                <button onClick={() => setInternalOpen(true)} className="relative overflow-hidden px-8 py-4 bg-transparent border-2 border-white group-hover:border-transparent text-white font-bold hover:border-none rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 group">
+                                <button onClick={() => openChat(true)} className="relative overflow-hidden px-8 py-4 bg-transparent border-2 border-white group-hover:border-transparent text-white font-bold hover:border-none rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 group">
                                     {/* Cortina azul de abajo hacia arriba */}
                                     <span className="absolute inset-0 bg-blue-500 transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out"></span>
 

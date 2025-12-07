@@ -1,8 +1,11 @@
 // src/components/MobileMenu.jsx
 import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { useChatContext } from '../../hooks/useChatContext';
 
 export default function MobileMenu({ isMenuOpen, setIsMenuOpen, navHeight }) {
+    const { openChat } = useChatContext();
+
     useEffect(() => {
         if (isMenuOpen) {
             document.body.style.overflow = 'hidden'
@@ -16,11 +19,6 @@ export default function MobileMenu({ isMenuOpen, setIsMenuOpen, navHeight }) {
 
     const handleLinkClick = () => {
         setIsMenuOpen(false)
-    }
-
-    const handleCotizarClick = () => {
-        setIsMenuOpen(false)
-        window.location.href = '#cotizar'
     }
 
     // ⭐ No renderizar nada si el menú está cerrado
@@ -142,7 +140,7 @@ export default function MobileMenu({ isMenuOpen, setIsMenuOpen, navHeight }) {
                                 className="relative w-full text-blue-600 cursor-pointer px-8 py-4 rounded-full 
                                     font-bold transition-all duration-300 shadow-lg overflow-hidden group
                                     border-2 border-blue-500 bg-transparent hover:text-white"
-                                onClick={handleCotizarClick}
+                                onClick={() => openChat(true)}
                             >
                                 {/* Cortina que baja desde arriba */}
                                 <span className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-600 

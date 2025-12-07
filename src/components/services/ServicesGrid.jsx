@@ -153,7 +153,7 @@ export default function ServicesGrid() {
     };
 
     return (
-        <div>
+        <div id="servicios">
             {/* POPULAR */}
             {popularServices.length > 0 && (
                 <section className="mb-12">

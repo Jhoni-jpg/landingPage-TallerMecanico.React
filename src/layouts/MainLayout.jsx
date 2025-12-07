@@ -2,7 +2,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import NavBar from "../components/navigation/Nav"
 import Footer from "../components/Footer";
 import WhatsAppWidget from "../components/WhatsAppContainer";
-import Chatbot from "../components/ChatBot";
+import Chatbot from "../components/chatbot/ChatBot";
 import { NotificationProvider } from "../context/notification.context";
 import { ChatProvider } from "../context/chat.context";
 import NotificationPermissionBanner from "../components/NotificationPermissionBanner";

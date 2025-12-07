@@ -1,8 +1,49 @@
+// src/context/ChatContext.jsx
 import { createContext, useState, useRef } from 'react';
 
 const ChatContext = createContext();
 
 export const ChatProvider = ({ children }) => {
+  // Estado para el tutorial
+  const [hasSeenTutorial, setHasSeenTutorial] = useState(() => {
+    return localStorage.getItem('chatbot_tutorial_seen') === 'true';
+  });
+  const [showTutorial, setShowTutorial] = useState(false);
+  const [currentTutorialStep, setCurrentTutorialStep] = useState(0);
+
+  const tutorialSteps = [
+    {
+      title: "¡Bienvenido a TorqueBot! 🤖",
+      description: "Tu asistente para agendar citas en SwiftService",
+      icon: "👋"
+    },
+    {
+      title: "Paso 1: Tipo de servicio",
+      description: "Primero, indícame qué tipo de servicio necesitas: mantenimiento, revisión o diagnóstico",
+      icon: "🔧"
+    },
+    {
+      title: "Paso 2: Detalles del servicio",
+      description: "Te preguntaré detalles específicos sobre el servicio que necesitas",
+      icon: "📋"
+    },
+    {
+      title: "Paso 3: Tu información",
+      description: "Necesitaré tu nombre, teléfono y correo electrónico para contactarte",
+      icon: "📞"
+    },
+    {
+      title: "Paso 4: Fecha y hora",
+      description: "Seleccionarás el día y hora que mejor te convenga",
+      icon: "📅"
+    },
+    {
+      title: "¡Listo! ✅",
+      description: "Recibirás una confirmación con todos los detalles de tu cita",
+      icon: "✨"
+    }
+  ];
+
   const [messages, setMessages] = useState(() => [{
     text: "¡Hola! 👋 Bienvenido a SwiftService Taller Mecánico. Soy TorqueBot, tu asistente virtual. ¿En qué puedo ayudarte hoy?",
     sender: "bot",
@@ -30,7 +71,6 @@ export const ChatProvider = ({ children }) => {
   const messagesEndRef = useRef(null);
   const textareaRef = useRef(null);
 
-  // Configuración de límites
   const MAX_LINES = 4;
   const MAX_CHARACTERS = 300;
 
@@ -42,25 +82,70 @@ export const ChatProvider = ({ children }) => {
     const newMessage = { ...message, time };
     setMessages((prev) => [...prev, newMessage]);
 
-    // Si es mensaje del bot y el chat está cerrado
     if (message.sender === "bot" && !internalOpen) {
       setUnreadCount((prev) => prev + 1);
       setLastBotMessage(message.text);
       setShowNotification(true);
 
-      // Ocultar notificación después de 5 segundos
       setTimeout(() => {
         setShowNotification(false);
       }, 5000);
 
-      // Notificación del navegador (si está permitido)
       if ("Notification" in window && Notification.permission === "granted") {
         new Notification("TorqueBot", {
           body: message.text.substring(0, 100) + (message.text.length > 100 ? "..." : ""),
+          icon: '/TorqueBot.jpg'
         });
       }
     }
   };
+
+  const completeTutorial = () => {
+    localStorage.setItem('chatbot_tutorial_seen', 'true');
+    setHasSeenTutorial(true);
+    setShowTutorial(false);
+    setCurrentTutorialStep(0);
+  };
+
+  const skipTutorial = () => {
+    completeTutorial();
+  };
+
+  const nextTutorialStep = () => {
+    if (currentTutorialStep < tutorialSteps.length - 1) {
+      setCurrentTutorialStep(prev => prev + 1);
+    } else {
+      completeTutorial();
+    }
+  };
+
+  const previousTutorialStep = () => {
+    if (currentTutorialStep > 0) {
+      setCurrentTutorialStep(prev => prev - 1);
+    }
+  };
+
+  // ⭐ Función toggleChat para abrir/cerrar desde cualquier componente
+  const toggleChat = (forceOpen) => {
+    const willOpen = forceOpen !== undefined ? forceOpen : !internalOpen;
+    setInternalOpen(willOpen);
+
+    if (willOpen) {
+      setUnreadCount(0);
+      setShowNotification(false);
+      
+      // Mostrar tutorial si es la primera vez
+      if (!hasSeenTutorial) {
+        setShowTutorial(true);
+      }
+    }
+  };
+
+  // ⭐ Función para abrir el chat
+  const openChat = () => toggleChat(true);
+
+  // ⭐ Función para cerrar el chat
+  const closeChat = () => toggleChat(false);
 
   const value = {
     messages,
@@ -85,6 +170,22 @@ export const ChatProvider = ({ children }) => {
     MAX_LINES,
     MAX_CHARACTERS,
     addMessage,
+    
+    // Tutorial
+    hasSeenTutorial,
+    showTutorial,
+    setShowTutorial,
+    currentTutorialStep,
+    tutorialSteps,
+    nextTutorialStep,
+    previousTutorialStep,
+    skipTutorial,
+    completeTutorial,
+
+    // ⭐ Funciones para controlar el chat desde fuera
+    toggleChat,
+    openChat,
+    closeChat,
   };
 
   return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>;

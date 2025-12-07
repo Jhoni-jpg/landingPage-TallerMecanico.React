@@ -4,9 +4,7 @@ import ModelViewer from '../ModelViewer';
 import { useChatContext } from '../../hooks/useChatContext';
 
 const Hero = ({ isHomePage }) => {
-    const {
-        setInternalOpen
-    } = useChatContext();
+    const { openChat } = useChatContext();
     const counterRefs = useRef([]);
 
     useEffect(() => {
@@ -131,7 +129,7 @@ const Hero = ({ isHomePage }) => {
                         {/* Botones de acción */}
                         <div className="flex flex-col sm:flex-row gap-4 animate-slide-up-delay-2">
                             <button
-                                onClick={() => setInternalOpen(true)}
+                                onClick={() => openChat(true)}
                                 className="group relative px-8 py-4 bg-gradient-to-r from-blue-200 to-blue-500 text-gray-900 font-bold rounded-lg overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/50"
                             >
                                 <span className="relative z-10 flex items-center group-hover:text-blue-50 justify-center gap-2">

@@ -2,6 +2,7 @@ import {
     Wrench, Car, Settings, Gauge, MapPin, MessageCircle,
     Shield, Clock, CheckCircle, Star
 } from 'lucide-react';
+import { useChatContext } from '../../hooks/useChatContext';
 
 const MechanicServiceHero = ({
 
@@ -15,7 +16,7 @@ const MechanicServiceHero = ({
         { icon: Shield, title: "Garantía Total", subtitle: "En todos los trabajos" },
         { icon: Clock, title: "Atención Rápida", subtitle: "Servicio express disponible" }
     ],
-    primaryButton = { text: "Agendar Cita", href: "#contacto" },
+    primaryButton = { text: "Agendar Cita" },
     secondaryButton = { text: "Ver Servicios", href: "#servicios" },
     services = [
         {
@@ -45,6 +46,7 @@ const MechanicServiceHero = ({
         { number: "20+", label: "Años" }
     ]
 }) => {
+    const { openChat } = useChatContext();
 
     return (
         <>
@@ -103,8 +105,8 @@ const MechanicServiceHero = ({
                             {/* Botones de acción */}
                             <div className="flex flex-col sm:flex-row gap-4">
                                 <a
-                                    href={primaryButton.href}
-                                    className="relative overflow-hidden px-8 py-4 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-all duration-300 hover:scale-105 shadow-xl text-center group"
+                                    onClick={() => openChat(true)}
+                                    className="relative overflow-hidden cursor-pointer px-8 py-4 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-all duration-300 hover:scale-105 shadow-xl text-center group"
                                 >
                                     <span className="relative flex items-center justify-center gap-2">
                                         <MessageCircle className="w-5 h-5" />
@@ -193,14 +195,4 @@ const MechanicServiceHero = ({
     );
 };
 
-// Ejemplo de uso con servicios mecánicos
-const App = () => {
-    return (
-        <div className="min-h-screen bg-transparent">
-            {/* Hero principal para taller mecánico */}
-            <MechanicServiceHero />
-        </div>
-    );
-};
-
-export default App;
+export default MechanicServiceHero;

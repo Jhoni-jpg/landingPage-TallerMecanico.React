@@ -3,11 +3,13 @@ import { useState, useEffect, useRef } from 'react'
 import pageLogo from '../../assets/logo.png'
 import { Link } from 'react-router-dom'
 import MobileMenu from './MobileMenu'
+import { useChatContext } from '../../hooks/useChatContext'
 
 export function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [navHeight, setNavHeight] = useState(0)
+  const { openChat } = useChatContext();
   const navRef = useRef(null)
 
   useEffect(() => {
@@ -125,7 +127,7 @@ export function NavBar() {
                 w-[200px] font-semibold border border-[#63acff] transition-all duration-300
                 hover:-translate-y-0.5 hover:bg-[#63a4ff] hover:text-white 
                 hover:shadow-[0_4px_15px_rgba(53,141,255,0.3)]"
-              onClick={() => { window.location.href = '#cotizar'; }}
+              onClick={() => openChat(true)}
             >
               Cotizar ahora
             </button>

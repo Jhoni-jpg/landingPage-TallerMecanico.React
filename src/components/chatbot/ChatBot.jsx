@@ -1,7 +1,9 @@
-import { useEffect } from "react";
+// src/components/Chatbot.jsx
+import { useEffect, useState } from "react";
 import { MessageCircle, X, Send, User } from 'lucide-react';
-import botLogo from '../assets/TorqueBot.jpg';
-import { useChatContext } from '../hooks/useChatContext';
+import botLogo from '../../assets/TorqueBot.jpg';
+import { useChatContext } from '../../hooks/useChatContext';
+import TutorialOverlay from './TutorialOverlay';
 
 const API_URL = "http://localhost:8000";
 
@@ -13,7 +15,6 @@ const Chatbot = ({ isOpen: externalIsOpen, onClose: externalOnClose }) => {
         input,
         setInput,
         internalOpen,
-        setInternalOpen,
         conversacionId,
         unreadCount,
         setUnreadCount,
@@ -27,34 +28,56 @@ const Chatbot = ({ isOpen: externalIsOpen, onClose: externalOnClose }) => {
         MAX_LINES,
         MAX_CHARACTERS,
         addMessage,
+        // Tutorial
+        hasSeenTutorial,
+        showTutorial,
+        setShowTutorial,
+        currentTutorialStep,
+        tutorialSteps,
+        nextTutorialStep,
+        previousTutorialStep,
+        skipTutorial,
+        completeTutorial,
+        // Funciones de control del chat
+        toggleChat,
     } = useChatContext();
 
-    // Combina el control interno y externo
+    // ⭐ Estados para animación
+    const [isVisible, setIsVisible] = useState(false);
+    const [shouldRender, setShouldRender] = useState(false);
+
     const open = externalIsOpen !== undefined ? externalIsOpen : internalOpen;
+
+    // ⭐ Manejar animaciones de entrada/salida
+    useEffect(() => {
+        if (open) {
+            setShouldRender(true);
+            // Pequeño delay para que la animación se active después del render
+            setTimeout(() => setIsVisible(true), 10);
+        } else {
+            setIsVisible(false);
+            // Esperar a que termine la animación antes de desmontar
+            const timer = setTimeout(() => setShouldRender(false), 300);
+            return () => clearTimeout(timer);
+        }
+    }, [open]);
 
     const handleClose = () => {
         if (externalOnClose) {
             externalOnClose();
         } else {
-            setInternalOpen(false);
+            toggleChat(false);
         }
     };
 
     const handleToggle = () => {
-        const willOpen = !internalOpen;
-        setInternalOpen(willOpen);
-
-        if (willOpen) {
-            setUnreadCount(0);
-            setShowNotification(false);
-        }
+        toggleChat();
     };
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages, isTyping, messagesEndRef]);
 
-    // Conectar con tu API
     const sendToAPI = async (userMessage) => {
         try {
             const response = await fetch(`${API_URL}/api/chat`, {
@@ -77,7 +100,6 @@ const Chatbot = ({ isOpen: externalIsOpen, onClose: externalOnClose }) => {
         }
     };
 
-    // Maneja el cambio en el textarea y ajusta la altura
     const handleInputChange = (e) => {
         const textarea = e.target;
         const newValue = textarea.value;
@@ -92,7 +114,6 @@ const Chatbot = ({ isOpen: externalIsOpen, onClose: externalOnClose }) => {
         }
     };
 
-    // Maneja el evento de tecla presionada
     const handleKeyDown = (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
@@ -156,7 +177,7 @@ const Chatbot = ({ isOpen: externalIsOpen, onClose: externalOnClose }) => {
 
     return (
         <div className="fixed bottom-6 right-6 z-50">
-            {/* Notificación flotante cuando el chat está cerrado */}
+            {/* Notificación flotante */}
             {!open && showNotification && (
                 <div className="absolute bottom-20 right-0 w-80 bg-white rounded-lg shadow-2xl p-4 mb-2 animate-slide-up border-l-4 border-blue-600">
                     <div className="flex items-start gap-3">
@@ -185,10 +206,9 @@ const Chatbot = ({ isOpen: externalIsOpen, onClose: externalOnClose }) => {
                 </div>
             )}
 
-            {/* Botón flotante - solo visible cuando NO está abierto */}
+            {/* Botón flotante */}
             {!open && (
                 <div className="relative">
-                    {/* Badge de notificaciones */}
                     {unreadCount > 0 && (
                         <div className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold z-10 animate-pulse">
                             {unreadCount > 9 ? '9+' : unreadCount}
@@ -203,9 +223,30 @@ const Chatbot = ({ isOpen: externalIsOpen, onClose: externalOnClose }) => {
                 </div>
             )}
 
-            {/* Ventana de chat */}
-            {open && (
-                <div className="w-[380px] sm:w-[400px] bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col h-[600px] transition-all duration-300">
+            {/* ⭐ Ventana de chat con animaciones */}
+            {shouldRender && (
+                <div 
+                    className={`
+                        w-[380px] sm:w-[400px] bg-white rounded-2xl shadow-2xl overflow-hidden 
+                        flex flex-col h-[600px] relative
+                        transition-all duration-300 ease-out origin-bottom-right
+                        ${isVisible 
+                            ? 'opacity-100 scale-100 translate-y-0' 
+                            : 'opacity-0 scale-95 translate-y-4'
+                        }
+                    `}
+                >
+                    {/* Tutorial Overlay Component */}
+                    <TutorialOverlay
+                        isVisible={showTutorial}
+                        currentStep={currentTutorialStep}
+                        steps={tutorialSteps}
+                        onNext={nextTutorialStep}
+                        onPrevious={previousTutorialStep}
+                        onSkip={skipTutorial}
+                        onComplete={completeTutorial}
+                    />
+
                     {/* Header */}
                     <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-4 flex items-center justify-between">
                         <div className="flex items-center gap-3">
@@ -223,6 +264,18 @@ const Chatbot = ({ isOpen: externalIsOpen, onClose: externalOnClose }) => {
                             </div>
                         </div>
                         <div className="flex gap-2">
+                            {/* Botón para volver a ver tutorial */}
+                            {hasSeenTutorial && (
+                                <button
+                                    onClick={() => setShowTutorial(true)}
+                                    className="text-white hover:bg-white/20 p-2 rounded-lg transition"
+                                    title="Ver tutorial"
+                                >
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </button>
+                            )}
                             <button
                                 onClick={handleClose}
                                 className="text-white hover:bg-white/20 p-2 rounded-lg transition"
