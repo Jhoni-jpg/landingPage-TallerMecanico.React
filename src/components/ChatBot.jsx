@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { MessageCircle, X, Send, User } from 'lucide-react';
 import botLogo from '../assets/TorqueBot.jpg';
-import { useChatContext } from '../hooks/ChatBot/useChatContext';
+import { useChatContext } from '../hooks/useChatContext';
 
 const API_URL = "http://localhost:8000";
 

@@ -68,7 +68,7 @@ const AutoBrandsCarousel = () => {
                 <div className="absolute right-0 top-0 bottom-0 w-32 md:w-48 bg-gradient-to-l from-gray-100 to-transparent z-10 pointer-events-none"></div>
 
                 {/* Scrolling container */}
-                <div className="flex gap-8 animate-scroll py-8">
+                <div className="flex gap-8 animate-scrollBrands py-8">
                     {duplicatedBrands.map((brand, index) => (
                         <div
                             key={`${brand.name}-${index}`}

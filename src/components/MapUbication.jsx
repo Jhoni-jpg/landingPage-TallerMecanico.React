@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import logoPage from "../assets/logo.png";
+import "leaflet/dist/leaflet.css";
 
 export default function MapUbication() {
     const [selected, setSelected] = useState(null);
@@ -34,7 +35,7 @@ export default function MapUbication() {
             }).addTo(map);
 
             const customIcon = L.icon({
-                iconUrl: logoPage.src,
+                iconUrl: logoPage,
                 iconSize: [38, 38],
                 iconAnchor: [19, 38],
                 popupAnchor: [0, -38],

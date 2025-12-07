@@ -1,9 +1,9 @@
 import { Calendar, Clock, Check } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import ModelViewer from '../ModelViewer';
-import { useChatContext } from '../../hooks/ChatBot/useChatContext';
+import { useChatContext } from '../../hooks/useChatContext';
 
-const Hero = () => {
+const Hero = ({ isHomePage }) => {
     const {
         setInternalOpen
     } = useChatContext();
@@ -32,6 +32,8 @@ const Hero = () => {
             }
         });
     }, []);
+
+    if (!isHomePage) return;
 
     return (
         <section

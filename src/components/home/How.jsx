@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useChatContext } from "../../hooks/ChatBot/useChatContext";
+import { useChatContext } from "../../hooks/useChatContext";
 
 export default function HowItWorks() {
     const {

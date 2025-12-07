@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import NotificationContext from '../../context/ChatBot/NotificationContext';
+import NotificationContext from '../context/notification.context';
 
 export const useNotificationContext = () => {
     const context = useContext(NotificationContext);

@@ -1,7 +1,7 @@
 // components/NotificationPermissionBanner.jsx
 import { useState, useEffect } from 'react';
 import { Bell, X } from 'lucide-react';
-import { useNotificationContext } from '../hooks/ChatBot/useNotificationContext';
+import { useNotificationContext } from '../hooks/useNotificationContext';
 
 const NotificationPermissionBanner = () => {
     const { requestNotificationPermission, permission } = useNotificationContext();

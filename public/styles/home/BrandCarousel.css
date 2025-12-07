@@ -1,8 +1,8 @@
-.animate-scroll {
-    animation: scroll 30s linear infinite;
+.animate-scrollBrands {
+    animation: scrollBrands 30s linear infinite;
 }
 
-.animate-scroll:hover {
+.animate-scrollBrands:hover {
     animation-play-state: paused;
 }
 

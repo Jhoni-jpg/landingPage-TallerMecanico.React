@@ -1,5 +1,4 @@
 import { useTip } from "../context/toolTip.context";
-import React from 'react';
 import ChatTooltip from "./tooltip/ChatTooltip";
 
 // Componente principal
