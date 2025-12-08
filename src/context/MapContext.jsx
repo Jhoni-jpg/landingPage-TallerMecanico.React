@@ -126,6 +126,31 @@ export const MapProvider = ({ children }) => {
         }
     };
 
+    // Limpiar todo (usuario + ruta)
+    const clearAll = () => {
+        // Limpiar ruta
+        if (routingControl && map) {
+            try {
+                map.removeControl(routingControl);
+            } catch (error) {
+                console.error("Error al remover control de ruta:", error);
+            }
+            setRoutingControl(null);
+        }
+
+        // Limpiar marcador de usuario
+        if (userLocation && userLocation.marker && map) {
+            try {
+                map.removeLayer(userLocation.marker);
+            } catch (error) {
+                console.error("Error al remover marcador de usuario:", error);
+            }
+            setUserLocation(null);
+        }
+
+        setRouteInfo(null);
+    };
+
     // Centrar mapa en ubicación
     const focusLocation = (location) => {
         if (map) {
@@ -150,6 +175,7 @@ export const MapProvider = ({ children }) => {
         formatTime,
         createRouteToLocation,
         clearRoute,
+        clearAll,
         focusLocation
     };
 

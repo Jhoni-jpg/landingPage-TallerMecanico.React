@@ -12,6 +12,7 @@ import SelectedLocationInfo from "./map/SelectedLocationInfo";
 export default function MapUbication() {
     const [showLocations, setShowLocations] = useState(false);
     const [showDestinationSelector, setShowDestinationSelector] = useState(false);
+    const [showRoutePanel, setShowRoutePanel] = useState(true);
 
     const {
         locations,
@@ -34,6 +35,7 @@ export default function MapUbication() {
         setRouteInfo,
         createRouteToLocation,
         clearRoute,
+        clearAll, // Nueva función
         focusLocation
     } = useMap();
 
@@ -56,6 +58,7 @@ export default function MapUbication() {
 
         if (control) {
             setRoutingControl(control);
+            setShowRoutePanel(true);
         }
 
         setShowDestinationSelector(false);
@@ -65,6 +68,11 @@ export default function MapUbication() {
     const handleFocusLocation = (location) => {
         focusLocation(location);
         setSelected(location);
+    };
+
+    // Cerrar solo el panel, NO la ruta
+    const handleCloseRoutePanel = () => {
+        setShowRoutePanel(false);
     };
 
     useEffect(() => {
@@ -110,9 +118,6 @@ export default function MapUbication() {
                 mapInstance.fitBounds(bounds, { padding: [50, 50] });
             }
 
-            let userMarker = null;
-            let currentRoutingControl = null;
-
             const btn = document.getElementById("btn-location");
 
             if (btn) {
@@ -123,25 +128,14 @@ export default function MapUbication() {
                                 const lat = pos.coords.latitude;
                                 const lng = pos.coords.longitude;
 
-                                // Limpiar
-                                if (userMarker) {
-                                    mapInstance.removeLayer(userMarker);
-                                    userMarker = null;
-                                }
-                                if (currentRoutingControl) {
-                                    try {
-                                        mapInstance.removeControl(currentRoutingControl);
-                                    } catch (error) {
-                                        console.error("Error al remover control:", error);
-                                    }
-                                    currentRoutingControl = null;
-                                }
+                                // CRÍTICO: Limpiar TODO antes de crear nueva ubicación
+                                clearAll();
 
-                                setRouteInfo(null);
-                                setRoutingControl(null);
+                                // Pequeña pausa para asegurar la limpieza
+                                await new Promise(resolve => setTimeout(resolve, 100));
 
-                                // Agregar marcador de usuario
-                                userMarker = LeafletLib.marker([lat, lng], {
+                                // Agregar nuevo marcador de usuario
+                                const userMarker = LeafletLib.marker([lat, lng], {
                                     icon: LeafletLib.icon({
                                         iconUrl: "https://cdn-icons-png.flaticon.com/512/64/64113.png",
                                         iconSize: [35, 35],
@@ -152,11 +146,14 @@ export default function MapUbication() {
                                     .bindPopup("Tu ubicación actual")
                                     .openPopup();
 
+                                // Guardar nueva ubicación de usuario
                                 setUserLocation({ lat, lng, marker: userMarker });
 
+                                // Encontrar ubicación más cercana
                                 const nearestLocation = findNearestLocation(lat, lng);
 
-                                currentRoutingControl = await createRouteToLocation(
+                                // Crear nueva ruta
+                                const control = await createRouteToLocation(
                                     LeafletLib,
                                     mapInstance,
                                     userMarker,
@@ -167,8 +164,9 @@ export default function MapUbication() {
                                     calculateRealDistance
                                 );
 
-                                if (currentRoutingControl) {
-                                    setRoutingControl(currentRoutingControl);
+                                if (control) {
+                                    setRoutingControl(control);
+                                    setShowRoutePanel(true);
                                 }
 
                                 setShowDestinationSelector(true);
@@ -213,7 +211,12 @@ export default function MapUbication() {
                 <div className="relative">
                     <MapContainer />
 
-                    <RouteInfoPanel routeInfo={routeInfo} />
+                    {showRoutePanel && (
+                        <RouteInfoPanel 
+                            routeInfo={routeInfo} 
+                            onClose={handleCloseRoutePanel}
+                        />
+                    )}
 
                     <DestinationSelector
                         show={showDestinationSelector}
