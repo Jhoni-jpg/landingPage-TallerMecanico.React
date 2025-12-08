@@ -5,6 +5,7 @@ import Servicios from "./pages/servicios";
 import Contacto from "./pages/contacto";
 import ServicesLayout from "./layouts/LayoutServices";
 import LayoutContact from "./layouts/LayoutContact";
+import Pintura from "./pages/pintura";
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
           <Route element={<LayoutContact />}>
             <Route path="/contacto" element={<Contacto />} />
           </Route>
+          <Route path="/pintura" element={<Pintura />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -1,5 +1,5 @@
 import { ServicesProvider } from '../context/services.context.jsx';
-import Hero from '../components/services/Hero.jsx';
+import Hero from '../components/Hero.jsx';
 import { Outlet } from 'react-router-dom';
 
 export default function ServicesLayout() {

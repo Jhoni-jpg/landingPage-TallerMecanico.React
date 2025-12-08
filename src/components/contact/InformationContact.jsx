@@ -7,6 +7,7 @@ const ContactInfo = () => {
             icon: Clock,
             iconColor: 'from-blue-500 to-indigo-600',
             iconBg: 'bg-gradient-to-br from-blue-50 to-indigo-50',
+            iconStroke: 'stroke-blue-600',
             title: 'Horario de Atención',
             content: [
                 'Lunes a Viernes: 8:00 AM - 6:00 PM',
@@ -20,6 +21,7 @@ const ContactInfo = () => {
             icon: Phone,
             iconColor: 'from-green-500 to-emerald-600',
             iconBg: 'bg-gradient-to-br from-green-50 to-emerald-50',
+            iconStroke: 'stroke-green-600',
             title: 'Teléfono',
             content: [
                 { text: '(305) 555-0123', style: 'text-lg sm:text-xl font-bold text-gray-900' },
@@ -33,6 +35,7 @@ const ContactInfo = () => {
             icon: MapPin,
             iconColor: 'from-red-500 to-rose-600',
             iconBg: 'bg-gradient-to-br from-red-50 to-rose-50',
+            iconStroke: 'stroke-red-600',
             title: 'Ubicación',
             content: [
                 'Calle 45 #23-67',
@@ -49,6 +52,7 @@ const ContactInfo = () => {
             icon: Mail,
             iconColor: 'from-purple-500 to-violet-600',
             iconBg: 'bg-gradient-to-br from-purple-50 to-violet-50',
+            iconStroke: 'stroke-purple-600',
             title: 'Correo Electrónico',
             content: [
                 'info@tallermecanico.com',
@@ -70,7 +74,7 @@ const ContactInfo = () => {
                         <div className="contact-card-inner group">
                             {/* Badge opcional */}
                             {item.badge && (
-                                <div className="absolute -top-2 -right-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg animate-pulse">
+                                <div className="absolute -top-2 -right-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg animate-pulse z-20">
                                     {item.badge}
                                 </div>
                             )}
@@ -79,11 +83,8 @@ const ContactInfo = () => {
                             <div className="relative flex-shrink-0">
                                 <div className={`icon-container ${item.iconBg} w-[50px] h-[50px] sm:w-[60px] sm:h-[60px]`}>
                                     <IconComponent
-                                        className={`w-5 h-5 sm:w-6 sm:h-6 bg-gradient-to-br ${item.iconColor} text-transparent bg-clip-text icon-element`}
+                                        className={`w-5 h-5 sm:w-6 sm:h-6 ${item.iconStroke} icon-element relative z-10`}
                                         strokeWidth={2.5}
-                                        style={{
-                                            filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))'
-                                        }}
                                     />
                                     {/* Círculo decorativo detrás */}
                                     <div className={`icon-glow bg-gradient-to-br ${item.iconColor}`}></div>
@@ -145,7 +146,7 @@ const ContactInfo = () => {
                     </div>
                 );
             })}
-        </div >
+        </div>
     );
 };
 

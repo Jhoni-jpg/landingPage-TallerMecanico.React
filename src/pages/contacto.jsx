@@ -2,6 +2,8 @@ import ContactHeader from "../components/contact/ContactHeader";
 import ContactForm from "../components/contact/FormContact";
 import ContactInfo from "../components/contact/InformationContact";
 import MapUbication from "../components/MapUbication";
+import { LocationProvider } from "../context/LocationContext";
+import { MapProvider } from "../context/MapContext";
 
 export default function Contacto() {
     return (
@@ -11,7 +13,11 @@ export default function Contacto() {
                 <ContactForm />
                 <ContactInfo />
             </div>
-            <MapUbication />
+            <LocationProvider>
+                <MapProvider>
+                    <MapUbication />
+                </MapProvider>
+            </LocationProvider>
         </>
     );
 }

@@ -1,0 +1,101 @@
+.floating-card {
+    animation: floatCard 6s ease-in-out infinite;
+}
+
+.animate-delay-1 {
+    animation: floatCard 6s ease-in-out infinite;
+    animation-delay: 1s;
+}
+
+.animate-delay-2 {
+    animation: floatCard 6s ease-in-out infinite;
+    animation-delay: 2s;
+}
+
+.floating-card:hover {
+    animation-play-state: paused;
+}
+
+.floating-decoration {
+    animation: floatCard-slow 8s ease-in-out infinite;
+}
+
+.floating-decoration-slow {
+    animation: floatCard-slow 10s ease-in-out infinite;
+    animation-delay: 2s;
+}
+
+.floating-decoration-reverse {
+    animation: floatCard-reverse 7s ease-in-out infinite;
+    animation-delay: 1s;
+}
+
+.card-shine {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(255, 255, 255, 0.4),
+            transparent);
+    transition: left 0.7s ease;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.floating-card:hover .card-shine {
+    left: 100%;
+}
+
+.floating-card {
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-font-smoothing: antialiased;
+}
+
+.cta-button-curtain {
+    position: relative;
+}
+
+.curtain-left,
+.curtain-right {
+    position: absolute;
+    top: 0;
+    width: 60%;
+    height: 100%;
+    background: #3b82f6;
+    transition: transform 0.6s cubic-bezier(0.77, 0, 0.175, 1);
+    z-index: 1;
+}
+
+.curtain-left {
+    left: 0;
+    transform: translateX(-100%);
+}
+
+.curtain-right {
+    right: 0;
+    transform: translateX(100%);
+}
+
+/* Animación en hover */
+.cta-button-curtain:hover .curtain-left {
+    transform: translateX(0);
+}
+
+.cta-button-curtain:hover .curtain-right {
+    transform: translateX(0);
+}
+
+/* Animación del borde */
+.cta-button-curtain {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease, border-color 0.6s ease;
+}
+
+.cta-button-curtain:hover {
+    border-color: transparent;
+    box-shadow: 0 20px 25px -5px rgba(59, 130, 246, 0.3);
+}

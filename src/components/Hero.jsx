@@ -2,10 +2,9 @@ import {
     Wrench, Car, Settings, Gauge, MapPin, MessageCircle,
     Shield, Clock, CheckCircle, Star
 } from 'lucide-react';
-import { useChatContext } from '../../hooks/useChatContext';
+import { useChatContext } from '../hooks/useChatContext';
 
-const MechanicServiceHero = ({
-
+const Hero = ({
     location = "Barranquilla, Colombia",
     badge = "Taller Certificado",
     title = "Servicio Automotriz",
@@ -195,4 +194,4 @@ const MechanicServiceHero = ({
     );
 };
 
-export default MechanicServiceHero;
+export default Hero;

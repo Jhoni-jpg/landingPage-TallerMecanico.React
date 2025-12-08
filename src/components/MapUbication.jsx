@@ -1,106 +1,195 @@
 import { useEffect, useState } from "react";
-import logoPage from "../assets/logo.png";
 import "leaflet/dist/leaflet.css";
+import { useLocation } from "../context/LocationContext";
+import { useMap } from "../context/MapContext";
+import MapContainer from "./map/MapContainer";
+import MapControls from "./map/MapControls";
+import RouteInfoPanel from "./map/RouteInfoPanel";
+import DestinationSelector from "./map/DestinationSelector";
+import LocationsPanel from "./map/LocationsPanel";
+import SelectedLocationInfo from "./map/SelectedLocationInfo";
 
 export default function MapUbication() {
-    const [selected, setSelected] = useState(null);
+    const [showLocations, setShowLocations] = useState(false);
+    const [showDestinationSelector, setShowDestinationSelector] = useState(false);
 
-    // Función para verificar si está abierto
-    const isOpen = () => {
-        const now = new Date();
-        const day = now.getDay(); // 0 = Domingo, 1 = Lunes, ..., 6 = Sábado
-        const hours = now.getHours();
+    const {
+        locations,
+        selected,
+        setSelected,
+        findNearestLocation,
+        getMapCenter,
+        calculateRealDistance
+    } = useLocation();
 
-        // Lunes (1) a Viernes (5), de 7am a 9pm
-        if (day >= 1 && day <= 5) {
-            return hours >= 7 && hours < 21;
+    const {
+        map,
+        setMap,
+        L,
+        setL,
+        userLocation,
+        setUserLocation,
+        setRoutingControl,
+        routeInfo,
+        setRouteInfo,
+        createRouteToLocation,
+        clearRoute,
+        focusLocation
+    } = useMap();
+
+    // Manejar selección de destino
+    const handleDestinationSelect = async (location) => {
+        if (!userLocation || !map || !L) return;
+
+        clearRoute();
+
+        const control = await createRouteToLocation(
+            L,
+            map,
+            userLocation.marker,
+            userLocation.lat,
+            userLocation.lng,
+            location,
+            setSelected,
+            calculateRealDistance
+        );
+
+        if (control) {
+            setRoutingControl(control);
         }
 
-        return false; // Cerrado sábados y domingos
+        setShowDestinationSelector(false);
     };
 
-    const getStatusText = () => {
-        return isOpen() ? "Abierto ahora" : "Cerrado";
+    // Manejar focus en ubicación
+    const handleFocusLocation = (location) => {
+        focusLocation(location);
+        setSelected(location);
     };
 
     useEffect(() => {
-        import("leaflet").then((L) => {
-            const lt = 10.99252;
-            const lg = -74.78332;
+        // Cargar CSS de leaflet-routing-machine
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = 'https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css';
+        document.head.appendChild(link);
 
-            const map = L.map("map").setView([lt, lg], 13);
+        import("leaflet").then((LeafletModule) => {
+            const LeafletLib = LeafletModule.default;
+            setL(LeafletLib);
 
-            L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+            const center = getMapCenter();
+            const mapInstance = LeafletLib.map("map").setView(center, 13);
+
+            LeafletLib.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
                 attribution: "Ubicación directa",
-            }).addTo(map);
+            }).addTo(mapInstance);
 
-            const customIcon = L.icon({
-                iconUrl: logoPage,
-                iconSize: [38, 38],
-                iconAnchor: [19, 38],
-                popupAnchor: [0, -38],
-            });
+            setMap(mapInstance);
 
-            const marker = L.marker([lt, lg], { icon: customIcon }).addTo(map);
-
-            marker.bindPopup(
-                "<b>AF | Tu taller automotriz de confianza</b><br>Barranquilla - Atlántico, Colombia"
-            );
-
-            marker.on("click", () => {
-                setSelected({
-                    title: "AF | Taller Automotriz",
-                    desc: "Barranquilla - Atlántico, Colombia. Mantenimiento, mecánica y más.",
+            // Agregar marcadores
+            locations.forEach(location => {
+                const customIcon = LeafletLib.icon({
+                    iconUrl: location.logo,
+                    iconSize: [38, 38],
+                    iconAnchor: [19, 38],
+                    popupAnchor: [0, -38],
                 });
+
+                const marker = LeafletLib.marker([location.lat, location.lng], {
+                    icon: customIcon
+                }).addTo(mapInstance);
+
+                marker.bindPopup(`<b>${location.name}</b><br>${location.address}`);
+                marker.on("click", () => setSelected(location));
             });
+
+            // Ajustar vista
+            if (locations.length > 1) {
+                const bounds = LeafletLib.latLngBounds(locations.map(loc => [loc.lat, loc.lng]));
+                mapInstance.fitBounds(bounds, { padding: [50, 50] });
+            }
 
             let userMarker = null;
-            let routeLine = null;
+            let currentRoutingControl = null;
 
             const btn = document.getElementById("btn-location");
 
             if (btn) {
-                btn.addEventListener("click", () => {
+                const handleClick = () => {
                     if (navigator.geolocation) {
                         navigator.geolocation.getCurrentPosition(
-                            (pos) => {
+                            async (pos) => {
                                 const lat = pos.coords.latitude;
                                 const lng = pos.coords.longitude;
 
-                                if (userMarker) map.removeLayer(userMarker);
-                                if (routeLine) map.removeLayer(routeLine);
+                                // Limpiar
+                                if (userMarker) {
+                                    mapInstance.removeLayer(userMarker);
+                                    userMarker = null;
+                                }
+                                if (currentRoutingControl) {
+                                    try {
+                                        mapInstance.removeControl(currentRoutingControl);
+                                    } catch (error) {
+                                        console.error("Error al remover control:", error);
+                                    }
+                                    currentRoutingControl = null;
+                                }
 
-                                userMarker = L.marker([lat, lng], {
-                                    icon: L.icon({
+                                setRouteInfo(null);
+                                setRoutingControl(null);
+
+                                // Agregar marcador de usuario
+                                userMarker = LeafletLib.marker([lat, lng], {
+                                    icon: LeafletLib.icon({
                                         iconUrl: "https://cdn-icons-png.flaticon.com/512/64/64113.png",
                                         iconSize: [35, 35],
                                         iconAnchor: [17, 35],
                                     }),
                                 })
-                                    .addTo(map)
+                                    .addTo(mapInstance)
                                     .bindPopup("Tu ubicación actual")
                                     .openPopup();
 
-                                routeLine = L.polyline(
-                                    [
-                                        [lat, lng],
-                                        [lt, lg],
-                                    ],
-                                    { color: "#3b82f6", weight: 4, dashArray: "10,8" }
-                                ).addTo(map);
+                                setUserLocation({ lat, lng, marker: userMarker });
 
-                                const bounds = L.latLngBounds([lat, lng], [lt, lg]);
-                                map.flyToBounds(bounds, { padding: [50, 50], duration: 1.8 });
+                                const nearestLocation = findNearestLocation(lat, lng);
+
+                                currentRoutingControl = await createRouteToLocation(
+                                    LeafletLib,
+                                    mapInstance,
+                                    userMarker,
+                                    lat,
+                                    lng,
+                                    nearestLocation,
+                                    setSelected,
+                                    calculateRealDistance
+                                );
+
+                                if (currentRoutingControl) {
+                                    setRoutingControl(currentRoutingControl);
+                                }
+
+                                setShowDestinationSelector(true);
                             },
                             () => alert("No se pudo obtener tu ubicación")
                         );
                     } else {
                         alert("Tu navegador no soporta geolocalización.");
                     }
-                });
+                };
+
+                btn.addEventListener("click", handleClick);
             }
+
+            return () => {
+                if (mapInstance) {
+                    mapInstance.remove();
+                }
+            };
         });
-    }, []);
+    }, [locations]);
 
     return (
         <section className="bg-gray-100 mt-20 mb-40 py-12">
@@ -110,76 +199,39 @@ export default function MapUbication() {
                         Encuéntranos
                     </h2>
                     <p className="text-gray-600">
-                        Visítanos en Barranquilla o traza tu ruta desde donde estés
+                        Visítanos en nuestras {locations.length} {locations.length === 1 ? 'ubicación' : 'ubicaciones'} o traza tu ruta desde donde estés
                     </p>
                 </div>
 
-                <div className="flex justify-center mb-6">
-                    <button
-                        id="btn-location"
-                        className="relative overflow-hidden px-6 py-3 bg-transparent border-2 border-blue-500 text-blue-600 font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 group"
-                    >
-                        <span className="absolute inset-0 bg-blue-500 transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out"></span>
-
-                        <span className="relative flex items-center gap-2 group-hover:text-white transition-colors duration-300">
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                            Obtener mi ubicación
-                        </span>
-                    </button>
-                </div>
+                <MapControls
+                    userLocation={userLocation}
+                    onToggleDestinations={() => setShowDestinationSelector(!showDestinationSelector)}
+                    onToggleLocations={() => setShowLocations(!showLocations)}
+                    locationsCount={locations.length}
+                />
 
                 <div className="relative">
-                    <div
-                        className="rounded-2xl overflow-hidden shadow-2xl border-2 border-gray-200 hover:shadow-3xl transition-shadow duration-300 relative z-0"
-                        id="map"
-                        style={{
-                            height: "500px",
-                            width: "100%",
-                        }}
-                    ></div>
+                    <MapContainer />
 
-                    {selected && (
-                        <div className="absolute bottom-8 left-8 bg-gradient-to-br from-gray-900 to-gray-800 backdrop-blur-lg border border-white/30 rounded-2xl p-6 shadow-2xl w-80 text-white hover:scale-105 transition-transform duration-300 z-10">
-                            <div className="flex items-start justify-between mb-4">
-                                <div className="flex-1">
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <div className={`w-3 h-3 rounded-full ${isOpen() ? 'bg-green-400 animate-pulse' : 'bg-red-400'}`}></div>
-                                        <h3 className="text-xl font-bold">{selected.title}</h3>
-                                    </div>
-                                    <p className={`text-xs font-medium mb-2 ${isOpen() ? 'text-green-300' : 'text-red-300'}`}>
-                                        {getStatusText()} • Lun-Vie: 7am - 9pm
-                                    </p>
-                                    <p className="text-gray-300 text-sm leading-relaxed">
-                                        {selected.desc}
-                                    </p>
-                                </div>
+                    <RouteInfoPanel routeInfo={routeInfo} />
 
-                                <button
-                                    className="ml-3 p-2 rounded-full hover:bg-white/10 transition-colors duration-200"
-                                    onClick={() => setSelected(null)}
-                                >
-                                    <svg className="w-5 h-5 text-gray-400 hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                </button>
-                            </div>
+                    <DestinationSelector
+                        show={showDestinationSelector}
+                        onClose={() => setShowDestinationSelector(false)}
+                        userLocation={userLocation}
+                        onSelectDestination={handleDestinationSelect}
+                    />
 
-                            <a
-                                href="https://maps.app.goo.gl/wB2Pfg5MiPGkRnet9"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg text-sm font-medium transition-colors duration-200"
-                            >
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                </svg>
-                                Abrir en Google Maps
-                            </a>
-                        </div>
-                    )}
+                    <LocationsPanel
+                        show={showLocations}
+                        onClose={() => setShowLocations(false)}
+                        onSelectLocation={handleFocusLocation}
+                    />
+
+                    <SelectedLocationInfo
+                        location={selected}
+                        onClose={() => setSelected(null)}
+                    />
                 </div>
             </div>
         </section>

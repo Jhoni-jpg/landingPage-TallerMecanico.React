@@ -100,7 +100,7 @@ export function NavBar() {
 
             <li>
               <Link
-                to="/pinturas"
+                to="/pintura"
                 className="relative text-gray-800 no-underline font-semibold transition-colors duration-300
                   hover:text-[rgb(44,78,151)]
                   after:content-[''] after:absolute after:-bottom-1.5 after:left-0 after:w-0 after:h-0.5 

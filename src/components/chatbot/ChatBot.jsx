@@ -259,7 +259,7 @@ const Chatbot = ({ isOpen: externalIsOpen, onClose: externalOnClose }) => {
                         />
 
                         {/* Header */}
-                        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-4 flex items-center justify-between">
+                        <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-600 p-4 flex items-center justify-between">
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
                                     <img src={botLogo} className="w-full h-full rounded-full" alt="logotipo de bot" />
