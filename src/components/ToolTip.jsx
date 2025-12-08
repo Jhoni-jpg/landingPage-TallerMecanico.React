@@ -1,5 +1,5 @@
 import { useTip } from "../context/toolTip.context";
-import ChatTooltip from "./tooltip/ChatTooltip";
+import ChatTooltip from "./tooltip/ChatToolTip";
 
 // Componente principal
 export default function TooltipChatDemo() {
